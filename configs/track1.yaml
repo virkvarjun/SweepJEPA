@@ -1,0 +1,38 @@
+# Track 1: Modernized cine risk stratification
+
+data:
+  dataset: stanford_aimi_thyroid
+  frame_size: [224, 224]
+  patient_level_cv: true
+
+encoder:
+  name: usfm  # usfm | usf_mae | ultrafedfm
+  freeze: true
+  lora:
+    enabled: true
+    rank: 8
+    alpha: 16
+
+mil:
+  type: gated_attention  # gated_attention | average | set_transformer
+  hidden_dim: 256
+  dropout: 0.25
+
+loss:
+  type: focal
+  gamma: 2.0
+  minority_oversample: true
+
+decision:
+  type: conformal
+  sensitivity_floor: 0.95
+  abstention: true
+
+evaluation:
+  external_test: thyroidxl
+  metrics:
+    - auc
+    - sensitivity
+    - specificity
+    - nnb
+    - abstention_rate

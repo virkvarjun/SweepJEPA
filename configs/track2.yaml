@@ -1,0 +1,44 @@
+# Track 2: Geometry-aware sweep representation
+
+data:
+  pretrain:
+    unlabeled_corpora:
+      - openus_46
+  finetune:
+    dataset: stanford_aimi_thyroid
+    labeled_budget: 192
+
+stage_b:
+  pose_estimator: R_psi
+  output:
+    - pseudo_volume
+    - pose_graph
+  losses:
+    - cycle_consistency
+    - trajectory_smoothness
+  pretrain_on_tracked_sweeps: true
+
+stage_c:
+  architecture: pose_conditioned_jepa
+  tubelet:
+    spatial_size: 16
+    temporal_size: 2
+  mask_ratio: 0.75
+  ema_tau: 0.996
+  loss: l1_feature_space
+  pose_conditioning: true
+
+stage_d:
+  reuse_track1_head: true
+  freeze_encoder: true
+
+ablations:
+  - pose_conditioned_jepa
+  - pose_free_jepa
+  - set_transformer_baseline
+  - pixel_reconstruction
+  - shuffled_frame_order
+
+success_criterion:
+  improve_auc_or_specificity: true
+  matched_backbone_and_compute: true
