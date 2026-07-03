@@ -21,6 +21,8 @@ outputs/
 *.pt
 *.pth
 *.ckpt
+# Keep baseline Cine-CNNTrans weights from the original paper release
+!Original Paper Code/modelweights_cinecnntrans/*.pth
 
 # Data (large; download separately)
 data/

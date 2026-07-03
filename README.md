@@ -56,14 +56,19 @@ Stage D: Track 1 MIL + conformal head on frozen Stage-C encoder
 
 ```
 SweepJEPA/
-├── configs/           # Experiment configs (Track 1 & 2)
+├── Original Paper Code/  # Cine-CNNTrans baseline (Yamashita et al.)
+├── configs/              # Experiment configs (Track 1 & 2)
 ├── src/
-│   ├── track1/        # US encoder, attention-MIL, conformal decision
-│   ├── track2/        # Pose estimator, JEPA, sweep reconstruction
-│   └── shared/        # Data loading and utilities
-├── scripts/           # Training and evaluation entry points
-└── docs/              # Proposal and design notes
+│   ├── track1/           # US encoder, attention-MIL, conformal decision
+│   ├── track2/           # Pose estimator, JEPA, sweep reconstruction
+│   └── shared/           # Data loading and utilities
+├── scripts/              # Training and evaluation entry points
+└── docs/                 # Proposal and design notes
 ```
+
+## Original Paper Code (Cine-CNNTrans baseline)
+
+Vendored from [tarakapoor/thyroid_deep_learning](https://github.com/tarakapoor/thyroid_deep_learning) (MIT). This is the MobileNet-v2 + Transformer pipeline from Yamashita et al. (*Radiology: AI* 2022), used as the Track 1 reproduction baseline. See `Original Paper Code/README.md` for setup and how to run `cnn_main.py` / `transformer_main.py`.
 
 ## Timeline
 
