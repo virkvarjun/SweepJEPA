@@ -2,16 +2,21 @@
 
 data:
   dataset: stanford_aimi_thyroid
+  # Until the Stanford AIMI DUA clears, develop against synthetic data.
+  synthetic: true
+  root: data/stanford_aimi_thyroid
+  manifest: data/stanford_aimi_thyroid/manifest.csv
   frame_size: [224, 224]
   patient_level_cv: true
 
 encoder:
-  name: usfm  # usfm | usf_mae | ultrafedfm
+  name: usfm  # usfm | usf_mae | ultrafedfm | imagenet_vit | imagenet_cnn
   freeze: true
   lora:
     enabled: true
     rank: 8
     alpha: 16
+  weights_path: null  # local checkpoint for gated US-FM weights; null -> random init
 
 mil:
   type: gated_attention  # gated_attention | average | set_transformer
@@ -20,13 +25,33 @@ mil:
 
 loss:
   type: focal
+  alpha: 0.25
   gamma: 2.0
   minority_oversample: true
 
+training:
+  epochs: 20
+  lr: 0.001
+  weight_decay: 0.0001
+  batch_size: 8
+  seed: 0
+
+cv:
+  n_splits: 5
+  seed: 0
+
 decision:
-  type: conformal
+  type: conformal  # conformal (rcps) | youden
   sensitivity_floor: 0.95
-  abstention: true
+  delta: 0.1
+  abstention_target: 0.2
+  calib_fraction: 0.4
+  sensitivity_weight: 2.0  # weighted-Youden ablation only
+
+logging:
+  wandb: false
+  project: sweepjepa-track1
+  output_dir: outputs/track1
 
 evaluation:
   external_test: thyroidxl
