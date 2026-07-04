@@ -1,6 +1,11 @@
 # Track 2: Geometry-aware sweep representation
 
 data:
+  # Unlabeled cine for pretraining; labeled AIMI for Stage D fine-tune.
+  synthetic: true
+  synthetic_pretrain_clips: 80
+  synthetic_frames: 16
+  frame_size: [224, 224]
   pretrain:
     unlabeled_corpora:
       - openus_46
@@ -8,8 +13,19 @@ data:
     dataset: stanford_aimi_thyroid
     labeled_budget: 192
 
+# Shared US foundation backbone (matched with Track 1 — non-negotiable #6).
+encoder:
+  name: usfm  # usfm | usf_mae | ultrafedfm | imagenet_cnn
+  freeze: true
+  lora:
+    enabled: false
+    rank: 8
+    alpha: 16
+  weights_path: null
+
 stage_b:
   pose_estimator: R_psi
+  representation: rot6d
   output:
     - pseudo_volume
     - pose_graph
@@ -21,12 +37,19 @@ stage_b:
 stage_c:
   architecture: pose_conditioned_jepa
   tubelet:
-    spatial_size: 16
     temporal_size: 2
   mask_ratio: 0.75
   ema_tau: 0.996
-  loss: l1_feature_space
+  teacher_type: ema       # ema | frozen (SALT)
+  target_space: latent    # latent | input (pixel/token recon baseline)
   pose_conditioning: true
+  depth: 4
+  predictor_depth: 2
+  num_heads: 6
+  epochs: 30
+  lr: 0.001
+  batch_size: 8
+  seed: 0
 
 stage_d:
   reuse_track1_head: true
@@ -38,7 +61,11 @@ ablations:
   - set_transformer_baseline
   - pixel_reconstruction
   - shuffled_frame_order
+  - ema_vs_frozen_teacher
+  - label_efficiency
 
 success_criterion:
+  # Pre-registered: pose-conditioned must beat pose-free AND set-transformer at
+  # matched backbone + compute on downstream AUC or decision-specificity.
   improve_auc_or_specificity: true
   matched_backbone_and_compute: true
