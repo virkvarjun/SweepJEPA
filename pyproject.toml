@@ -1,0 +1,21 @@
+[project]
+name = "sweepjepa"
+version = "0.1.0"
+description = "Cine-ultrasound thyroid risk stratification: two-track research program"
+requires-python = ">=3.9"
+
+[tool.pytest.ini_options]
+# Imports are absolute (`from src.track1 import ...`), so the repo root must be
+# importable. This makes a bare `pytest` work without PYTHONPATH gymnastics.
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+extend-exclude = ["Original Paper Code"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = ["E501"]
